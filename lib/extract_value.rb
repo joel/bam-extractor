@@ -2,5 +2,10 @@ require "extract_value/version"
 
 module ExtractValue
   class Error < StandardError; end
-  # Your code goes here...
+  
+  class Main
+    def extract_value(input)
+      input
+    end
+  end
 end
