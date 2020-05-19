@@ -1,9 +1,13 @@
-RSpec.describe ExtractValue do
-  it "has a version number" do
-    expect(ExtractValue::VERSION).not_to be nil
-  end
-
-  it "does something useful" do
-    expect(false).to eq(true)
+module ExtractValue
+  RSpec.describe Main do
+    describe '#extract_value' do
+      context 'Example 1' do
+        let(:input) {}
+        let(:result) {}
+        it do
+          expect(subject.extract_value(input)).to eql(result)
+        end
+      end
+    end
   end
 end
