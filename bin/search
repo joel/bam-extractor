@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+function exists()
+{
+  command -v "$1" >/dev/null 2>&1
+}
+
+if exists ruby; then
+  echo 'ruby exists!'
+else
+  echo 'Your system does not have rbenv installed'
+  exit 1
+fi
+
+if exists rbenv; then
+  echo 'rbenv exists!'
+else
+  echo 'Your system does not have rbenv installed'
+fi
+
+if exists rbenv; then
+  export RBENV_VERSION=2.7.1
+fi
+
+## TODO: make the all direction in the path
+ruby ~/Documents/Banque/extract_value/bin/search.rb $@
+
+if exists rbenv; then
+  export RBENV_VERSION=
+fi
