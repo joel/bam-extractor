@@ -5,16 +5,12 @@ function exists()
   command -v "$1" >/dev/null 2>&1
 }
 
-if exists ruby; then
-  echo 'ruby exists!'
-else
+if ! exists ruby; then
   echo 'Your system does not have rbenv installed'
   exit 1
 fi
 
-if exists rbenv; then
-  echo 'rbenv exists!'
-else
+if ! exists rbenv; then
   echo 'Your system does not have rbenv installed'
 fi
 

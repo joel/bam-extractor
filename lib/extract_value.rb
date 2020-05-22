@@ -10,7 +10,7 @@ require 'tty-table'
 
 Monetize.assume_from_symbol = true
 Money.default_currency = 'EUR'
-# Money.rounding_mode = 'ROUND_HALF_EVEN'
+Money.rounding_mode = BigDecimal::ROUND_HALF_UP
 
 # ExtractValue::Main.new.extract_value!
 
@@ -20,9 +20,11 @@ module ExtractValue
   class Main
     include ActionView::Helpers::NumberHelper
 
-    def initialize(expression:, verbose: false)
+    def initialize(expression:, verbose: false, write: false, max: 300)
       @expression = expression
       @verbose = verbose
+      @write = write
+      @max = max
     end
 
     def extract_value
@@ -61,7 +63,7 @@ module ExtractValue
           amount ||= Monetize.parse(cell)
           if amount
             puts("FOUND AMOUNT: #{cell}") if self.verbose
-            if amount.fractional == 0 || amount.fractional > 30_000
+            if amount.fractional == 0 || amount.fractional.abs > self.max * 100
               amount = nil
               next
             else
@@ -77,7 +79,8 @@ module ExtractValue
           next unless cell =~ Regexp.new(self.expression, Regexp::IGNORECASE)
           label ||= cell
           if label
-            hash[date_formatted][:label] = cell
+            puts("FOUND LABEL: [#{cell}]") if self.verbose
+            hash[date_formatted][:label] = shrink(cell)
             break
           end
         end
@@ -88,18 +91,28 @@ module ExtractValue
         data << [ info[:date], "#{info[:amount]}" ]
       end
 
-      header = [ 'Date', 'Amount' ]
-      CSV.open('extract.csv', 'w') do |csv|
-        csv << header
+      data.sort! do |x,y|
+        Chronic.parse(x[0]) <=> Chronic.parse(y[0])
+      end
 
-        data.each do |entry|
-          csv << entry
+      if self.write
+        header = [ 'Date', 'Amount' ]
+        CSV.open('extract.csv', 'w') do |csv|
+          csv << header
+
+          data.each do |entry|
+            csv << entry
+          end
         end
       end
 
       data = []
       hash.select { |k,v| !k.nil? }.each do |date, info|
         data << [ "#{info[:label][0..150]}", info[:date], "#{info[:amount_formatted]}" ]
+      end
+
+      data.sort! do |x,y|
+        Chronic.parse(x[1]) <=> Chronic.parse(y[1])
       end
 
       table = TTY::Table.new header: [ 'Label', 'Date', 'Amount' ], rows: data
@@ -125,7 +138,22 @@ module ExtractValue
 
     private
 
-    attr_reader :expression, :verbose
+    def shrink(content)
+      REXPRESSIONS.each do |i|
+        return i[:r] if content =~ Regexp.new(i[:exp], Regexp::IGNORECASE)
+      end
+      content
+    end
+
+    # Regexp.escape("Pago ADY\*NETFLIX 1016GD AMSTERNL(.*)")
+    REXPRESSIONS = [
+      {
+        exp: "NETFLIX",
+        r: "Pago NETFLIX"
+      }
+    ].freeze
+
+    attr_reader :expression, :verbose, :write, :max
 
   end
 end

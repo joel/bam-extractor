@@ -5,10 +5,12 @@ require 'optparse'
 module ExtractValue
   class OptparseExample
     class ScriptOptions
-      attr_accessor :expression, :verbose
+      attr_accessor :expression, :verbose, :write, :max
 
       def initialize
         self.verbose = false
+        self.write = false
+        self.max = 300
       end
 
       def define_options(parser)
@@ -18,8 +20,10 @@ module ExtractValue
 
         # add additional options
         expression_option(parser)
+        max_option(parser)
 
         boolean_verbose_option(parser)
+        boolean_write_option(parser)
 
         parser.separator ""
         parser.separator "Common options:"
@@ -43,10 +47,22 @@ module ExtractValue
         end
       end
 
+      def max_option(parser)
+        parser.on('-m MAX', '--max MAX', '[OPTIONAL] Keep only amount less than', Integer) do |max|
+          self.max = max
+        end
+      end
+
       def boolean_verbose_option(parser)
         # Boolean switch.
         parser.on("-v", "--[no-]verbose", "Run verbosely") do |v|
           self.verbose = v
+        end
+      end
+
+      def boolean_write_option(parser)
+        parser.on("-w", "--[no-]write", "Write the result in csv") do |w|
+          self.write = w
         end
       end
     end
@@ -80,7 +96,7 @@ module ExtractValue
     end
 
     def search
-      ExtractValue::Main.new(expression: options.expression, verbose: options.verbose).extract_value
+      ExtractValue::Main.new(expression: options.expression, verbose: options.verbose, write: options.write, max: options.max).extract_value
     end
 
     def help(opts)
