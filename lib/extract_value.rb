@@ -20,21 +20,18 @@ module ExtractValue
   class Main
     include ActionView::Helpers::NumberHelper
 
-    def initialize(expression:, verbose: false, write: false, max: 300)
-      @expression = expression
-      @verbose = verbose
-      @write = write
-      @max = max
+    def initialize(options)
+      @options = options
     end
 
     def extract_value
       rows = []
 
-      puts('Searching...') if self.verbose
+      puts('Searching...') if self.options.verbose
 
       Dir['../**/*.csv'].each do |file|
         CSV.foreach(file) do |row|
-          if row.join =~ Regexp.new(self.expression, Regexp::IGNORECASE)
+          if row.join =~ Regexp.new(self.options.expression, Regexp::IGNORECASE)
             rows << row
           end
         end
@@ -50,7 +47,7 @@ module ExtractValue
           next if hash[date_formatted][:date]
           date ||= Chronic.parse(cell)
           if date
-            puts("FOUND DATE: #{cell}") if self.verbose
+            puts("FOUND DATE: #{cell}") if self.options.verbose
             date_formatted = date.strftime('%d-%m-%Y')
             hash[date_formatted][:date] = date_formatted
             break
@@ -62,8 +59,8 @@ module ExtractValue
           next if hash[date_formatted][:amount]
           amount ||= Monetize.parse(cell)
           if amount
-            puts("FOUND AMOUNT: #{cell}") if self.verbose
-            if amount.fractional == 0 || amount.fractional.abs > self.max * 100
+            puts("FOUND AMOUNT: #{cell}") if self.options.verbose
+            if amount.fractional == 0 || amount.fractional.abs > self.options.max * 100
               amount = nil
               next
             else
@@ -76,11 +73,11 @@ module ExtractValue
 
         label = nil
         row.each do |cell|
-          next unless cell =~ Regexp.new(self.expression, Regexp::IGNORECASE)
+          next unless cell =~ Regexp.new(self.options.expression, Regexp::IGNORECASE)
           label ||= cell
           if label
-            puts("FOUND LABEL: [#{cell}]") if self.verbose
-            hash[date_formatted][:label] = shrink(cell)
+            puts("FOUND LABEL: [#{cell}]") if self.options.verbose
+            hash[date_formatted][:label] = substitute(cell)
             break
           end
         end
@@ -95,7 +92,7 @@ module ExtractValue
         Chronic.parse(x[0]) <=> Chronic.parse(y[0])
       end
 
-      if self.write
+      if self.options.write
         header = [ 'Date', 'Amount' ]
         CSV.open('extract.csv', 'w') do |csv|
           csv << header
@@ -133,12 +130,13 @@ module ExtractValue
       rescue
       end
 
-      puts('Done!') if self.verbose
+      puts('Done!') if self.options.verbose
     end
 
     private
 
-    def shrink(content)
+    def substitute(content)
+      return self.options.label if self.options.label
       REXPRESSIONS.each do |i|
         return i[:r] if content =~ Regexp.new(i[:exp], Regexp::IGNORECASE)
       end
@@ -153,7 +151,6 @@ module ExtractValue
       }
     ].freeze
 
-    attr_reader :expression, :verbose, :write, :max
-
+    attr_reader :options
   end
 end

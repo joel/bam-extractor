@@ -5,7 +5,7 @@ require 'optparse'
 module ExtractValue
   class OptparseExample
     class ScriptOptions
-      attr_accessor :expression, :verbose, :write, :max
+      attr_accessor :expression, :verbose, :write, :max, :label
 
       def initialize
         self.verbose = false
@@ -21,6 +21,7 @@ module ExtractValue
         # add additional options
         expression_option(parser)
         max_option(parser)
+        label_option(parser)
 
         boolean_verbose_option(parser)
         boolean_write_option(parser)
@@ -50,6 +51,12 @@ module ExtractValue
       def max_option(parser)
         parser.on('-m MAX', '--max MAX', '[OPTIONAL] Keep only amount less than', Integer) do |max|
           self.max = max
+        end
+      end
+
+      def label_option(parser)
+        parser.on('-l LABEL', '--label LABEL', '[OPTIONAL] Labelled the items', String) do |label|
+          self.label = label
         end
       end
 
@@ -96,7 +103,7 @@ module ExtractValue
     end
 
     def search
-      ExtractValue::Main.new(expression: options.expression, verbose: options.verbose, write: options.write, max: options.max).extract_value
+      ExtractValue::Main.new(options).extract_value
     end
 
     def help(opts)
