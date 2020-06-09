@@ -5,12 +5,13 @@ require 'optparse'
 module ExtractValue
   class OptparseExample
     class ScriptOptions
-      attr_accessor :expression, :verbose, :write, :max, :label
+      attr_accessor :expression, :verbose, :write, :max, :label, :trunk
 
       def initialize
         self.verbose = false
         self.write = false
         self.max = 300
+        self.trunk = 50
       end
 
       def define_options(parser)
@@ -22,6 +23,7 @@ module ExtractValue
         expression_option(parser)
         max_option(parser)
         label_option(parser)
+        trunk_option(parser)
 
         boolean_verbose_option(parser)
         boolean_write_option(parser)
@@ -51,6 +53,12 @@ module ExtractValue
       def max_option(parser)
         parser.on('-m MAX', '--max MAX', '[OPTIONAL] Keep only amount less than', Integer) do |max|
           self.max = max
+        end
+      end
+
+      def trunk_option(parser)
+        parser.on('-t TRUNK', '--trunk TRUNK', '[OPTIONAL] Trunk label', Integer) do |trunk|
+          self.trunk = trunk
         end
       end
 

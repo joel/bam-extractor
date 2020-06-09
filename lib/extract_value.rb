@@ -50,20 +50,26 @@ module ExtractValue
           if date
             puts("FOUND DATE: #{cell}") if self.options.verbose
 
-            case row[row.size-1]
-            when /n26/i
-              info[:date] = DateTime.strptime(cell, '%Y-%m-%d')
-            when /direct/i
-              info[:date] = DateTime.strptime(cell, '%m/%d/%Y')
-            when /hellobank/i
-              info[:date] = DateTime.strptime(cell, '%d/%m/%Y')
-            else
-              raise "Date Format Unknown [#{row[row.size-1]}]"
+            begin
+              case row[row.size-2..row.size-1].join
+              when /n26/i
+                info[:date] = DateTime.strptime(cell, '%Y-%m-%d')
+              when /direct/i
+                info[:date] = DateTime.strptime(cell, '%m/%d/%Y')
+              when /hellobank/i
+                info[:date] = DateTime.strptime(cell, '%d/%m/%Y')
+              else
+                raise "Date Format Unknown [#{row[row.size-1]}]"
+              end
+            rescue Date::Error => e
+              puts("ERROR: [#{cell}] => #{e.message} SOURCE: #{row[row.size-2..row.size-1].join}")
             end
 
             break
           end
         end
+
+        next unless date
 
         # Find the amount (We want to exclude the account balance!)
         amount = nil
@@ -76,6 +82,7 @@ module ExtractValue
           amount ||= Monetize.parse(cell)
           if amount
             puts("FOUND AMOUNT: #{cell}") if self.options.verbose
+
             # If the amount is superior to the max defined it might be the balance account
             if amount.fractional == 0 || amount.fractional.abs > self.options.max * 100
               puts("AMOUNT FILTERED OUT: #{cell}") if self.options.verbose
@@ -96,7 +103,7 @@ module ExtractValue
           label ||= cell
           if label
             puts("FOUND LABEL: [#{cell}]") if self.options.verbose
-            info[:label] = substitute(cell)
+            info[:label] = substitute(cell)[0..self.options.trunk]
             break
           end
         end
@@ -105,6 +112,11 @@ module ExtractValue
         info[:source_file] = row[row.size-1]
 
         raw_data << info if info[:date] && info[:amount]
+      end
+
+      if raw_data.empty?
+        puts("No Data")
+        return
       end
 
       raw_data.sort! do |x,y|
@@ -187,7 +199,7 @@ module ExtractValue
 
         puts renderer.render
       rescue StandardError => e
-        puts e.message
+        puts("ERROR: [#{e.message}]")
       end
 
       puts('Done!') if self.options.verbose
