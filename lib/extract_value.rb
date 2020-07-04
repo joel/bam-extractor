@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'zeitwerk'
 loader = Zeitwerk::Loader.for_gem
 loader.setup
@@ -27,12 +29,12 @@ module ExtractValue
     def extract_value
       rows = []
 
-      puts('Searching...') if self.options.verbose
+      puts('Searching...') if options.verbose
 
       Dir['../**/*.csv'].each do |file|
         CSV.foreach(file) do |row|
-          if row.join =~ Regexp.new(self.options.expression, Regexp::IGNORECASE)
-            rows << row + [ File.dirname(file).gsub('../',''), File.basename(file) ]
+          if row.join =~ Regexp.new(options.expression, Regexp::IGNORECASE)
+            rows << row + [File.dirname(file).gsub('../', ''), File.basename(file)]
           end
         end
       end
@@ -46,27 +48,28 @@ module ExtractValue
         date = nil
         row.each do |cell|
           next if info[:date]
+
           date ||= Chronic.parse(cell)
-          if date
-            puts("FOUND DATE: #{cell}") if self.options.verbose
+          next unless date
 
-            begin
-              case row[row.size-2..row.size-1].join
-              when /n26/i
-                info[:date] = DateTime.strptime(cell, '%Y-%m-%d')
-              when /direct/i
-                info[:date] = DateTime.strptime(cell, '%m/%d/%Y')
-              when /hellobank/i
-                info[:date] = DateTime.strptime(cell, '%d/%m/%Y')
-              else
-                raise "Date Format Unknown [#{row[row.size-1]}]"
-              end
-            rescue Date::Error => e
-              puts("ERROR: [#{cell}] => #{e.message} SOURCE: #{row[row.size-2..row.size-1].join}")
+          puts("FOUND DATE: #{cell}") if options.verbose
+
+          begin
+            case row[row.size - 2..row.size - 1].join
+            when /n26/i
+              info[:date] = DateTime.strptime(cell, '%Y-%m-%d')
+            when /direct/i
+              info[:date] = DateTime.strptime(cell, '%m/%d/%Y')
+            when /hellobank/i
+              info[:date] = DateTime.strptime(cell, '%d/%m/%Y')
+            else
+              raise "Date Format Unknown [#{row[row.size - 1]}]"
             end
-
-            break
+          rescue Date::Error => e
+            puts("ERROR: [#{cell}] => #{e.message} SOURCE: #{row[row.size - 2..row.size - 1].join}")
           end
+
+          break
         end
 
         next unless date
@@ -77,59 +80,60 @@ module ExtractValue
           next if info[:amount]
 
           next unless cell =~ /\./
-          next unless cell.gsub('.','') =~ /[0-9]/
+          next unless cell.gsub('.', '') =~ /[0-9]/
 
           amount ||= Monetize.parse(cell)
-          if amount
-            puts("FOUND AMOUNT: #{cell}") if self.options.verbose
+          next unless amount
 
-            # If the amount is superior to the max defined it might be the balance account
-            if amount.fractional == 0 || amount.fractional.abs > self.options.max * 100
-              puts("AMOUNT FILTERED OUT: #{cell}") if self.options.verbose
-              amount = nil
-              next
-            else
-              info[:amount] = amount.fractional.to_f / 100
-              info[:amount_formatted] = number_to_currency(info[:amount], unit: '€', separator: '.', delimiter: ',')
-              break
-            end
+          puts("FOUND AMOUNT: #{cell}") if options.verbose
+
+          # If the amount is superior to the max defined it might be the balance account
+          if amount.fractional == 0 || amount.fractional.abs > options.max * 100
+            puts("AMOUNT FILTERED OUT: #{cell}") if options.verbose
+            amount = nil
+            next
+          else
+            info[:amount] = amount.fractional.to_f / 100
+            info[:amount_formatted] = number_to_currency(info[:amount], unit: '€', separator: '.', delimiter: ',')
+            break
           end
         end
 
         # Find the label
         label = nil
         row.each do |cell|
-          next unless cell =~ Regexp.new(self.options.expression, Regexp::IGNORECASE)
+          next unless cell =~ Regexp.new(options.expression, Regexp::IGNORECASE)
+
           label ||= cell
-          if label
-            puts("FOUND LABEL: [#{cell}]") if self.options.verbose
-            info[:label] = substitute(cell)[0..self.options.trunk]
-            break
-          end
+          next unless label
+
+          puts("FOUND LABEL: [#{cell}]") if options.verbose
+          info[:label] = substitute(cell)[0..options.trunk]
+          break
         end
 
-        info[:source_dir]  = row[row.size-2]
-        info[:source_file] = row[row.size-1]
+        info[:source_dir]  = row[row.size - 2]
+        info[:source_file] = row[row.size - 1]
 
         raw_data << info if info[:date] && info[:amount]
       end
 
       if raw_data.empty?
-        puts("No Data")
+        puts('No Data')
         return
       end
 
-      raw_data.sort! do |x,y|
+      raw_data.sort! do |x, y|
         x[:date] <=> y[:date]
       end
 
-      if self.options.write
-        header = [ 'Date', 'Amount', 'Source' ]
+      if options.write
+        header = %w[Date Amount Source]
         CSV.open('extract.csv', 'w') do |csv|
           csv << header
 
           raw_data.each do |entry|
-            csv << [ entry[:date], entry[:amount], entry[:source_file]  ]
+            csv << [entry[:date], entry[:amount], entry[:source_file]]
           end
         end
       end
@@ -137,23 +141,23 @@ module ExtractValue
       data = []
       raw_data.each do |info|
         data << [
-          "#{info[:label]}",
+          (info[:label]).to_s,
           info[:date].strftime('%Y/%m/%d'),
           info[:date].strftime('%Y'),
           info[:date].strftime('%B'),
           info[:date].strftime('%A'),
-          "#{info[:amount_formatted]}",
+          (info[:amount_formatted]).to_s,
           info[:source_dir],
-          info[:source_file],
+          info[:source_file]
         ]
       end
 
-      data.sort! do |x,y|
+      data.sort! do |x, y|
         x[1] <=> y[1]
       end
 
-      table = TTY::Table.new header: [ 'Label', 'Date', 'Year', 'Month', 'Day', 'Amount', 'Source Dir', 'Source File' ], rows: data
-      renderer = TTY::Table::Renderer::Unicode.new(table, alignments: [ :left, :left, :left, :left, :left, :right, :left, :left ])
+      table = TTY::Table.new header: ['Label', 'Date', 'Year', 'Month', 'Day', 'Amount', 'Source Dir', 'Source File'], rows: data
+      renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left left left left right left left])
 
       puts renderer.render
 
@@ -163,11 +167,11 @@ module ExtractValue
         end.reduce(:+)
         average = sum / raw_data.size
 
-        table = TTY::Table.new header: [ 'Average', 'Sum' ], rows: [[
+        table = TTY::Table.new header: %w[Average Sum], rows: [[
           number_to_currency(average.round(2), unit: '€', separator: '.', delimiter: ','),
           number_to_currency(sum.round(2), unit: '€', separator: '.', delimiter: ',')
         ]]
-        renderer = TTY::Table::Renderer::Unicode.new(table, alignments: [:left, :left, :right])
+        renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left right])
 
         puts renderer.render
 
@@ -190,25 +194,26 @@ module ExtractValue
             v[:year],
             v[:month],
             number_to_currency(v[:average].round(2), unit: '€', separator: '.', delimiter: ','),
-            number_to_currency(v[:sum].round(2), unit: '€', separator: '.', delimiter: ','),
+            number_to_currency(v[:sum].round(2), unit: '€', separator: '.', delimiter: ',')
           ]
         end
 
-        table = TTY::Table.new header: [ 'Year', 'Month', 'Average', 'Sum' ], rows: d
-        renderer = TTY::Table::Renderer::Unicode.new(table, alignments: [:left, :left, :right, :right])
+        table = TTY::Table.new header: %w[Year Month Average Sum], rows: d
+        renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left right right])
 
         puts renderer.render
       rescue StandardError => e
         puts("ERROR: [#{e.message}]")
       end
 
-      puts('Done!') if self.options.verbose
+      puts('Done!') if options.verbose
     end
 
     private
 
     def substitute(content)
-      return self.options.label if self.options.label
+      return options.label if options.label
+
       REXPRESSIONS.each do |i|
         return i[:r] if content =~ Regexp.new(i[:exp], Regexp::IGNORECASE)
       end
@@ -218,8 +223,8 @@ module ExtractValue
     # Regexp.escape("Pago ADY\*NETFLIX 1016GD AMSTERNL(.*)")
     REXPRESSIONS = [
       {
-        exp: "NETFLIX",
-        r: "Pago NETFLIX"
+        exp: 'NETFLIX',
+        r: 'Pago NETFLIX'
       }
     ].freeze
 

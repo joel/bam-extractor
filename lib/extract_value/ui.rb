@@ -15,9 +15,9 @@ module ExtractValue
       end
 
       def define_options(parser)
-        parser.banner = "Usage: ExtractValue [options]"
-        parser.separator ""
-        parser.separator "Specific options:"
+        parser.banner = 'Usage: ExtractValue [options]'
+        parser.separator ''
+        parser.separator 'Specific options:'
 
         # add additional options
         expression_option(parser)
@@ -28,17 +28,17 @@ module ExtractValue
         boolean_verbose_option(parser)
         boolean_write_option(parser)
 
-        parser.separator ""
-        parser.separator "Common options:"
+        parser.separator ''
+        parser.separator 'Common options:'
 
         # No argument, shows at tail.  This will print an options summary.
         # Try it and see!
-        parser.on_tail("-h", "--help", "Show this message") do
+        parser.on_tail('-h', '--help', 'Show this message') do
           puts parser
           exit
         end
         # Another typical switch to print the version.
-        parser.on_tail("--version", "Show version") do
+        parser.on_tail('--version', 'Show version') do
           puts ExtractValue::VERSION
           exit
         end
@@ -70,13 +70,13 @@ module ExtractValue
 
       def boolean_verbose_option(parser)
         # Boolean switch.
-        parser.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+        parser.on('-v', '--[no-]verbose', 'Run verbosely') do |v|
           self.verbose = v
         end
       end
 
       def boolean_write_option(parser)
-        parser.on("-w", "--[no-]write", "Write the result in csv") do |w|
+        parser.on('-w', '--[no-]write', 'Write the result in csv') do |w|
           self.write = w
         end
       end
@@ -97,14 +97,14 @@ module ExtractValue
     end
 
     attr_reader :parser, :options, :option_parser
-  end  # class OptparseExample
+  end # class OptparseExample
 
   class Ui
     def initialize
       example = OptparseExample.new
       @options = example.parse(ARGV)
 
-      if !options.expression
+      unless options.expression
         help(example.option_parser)
         exit(1)
       end
