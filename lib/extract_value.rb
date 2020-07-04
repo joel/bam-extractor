@@ -26,6 +26,10 @@ module ExtractValue
       @options = options
     end
 
+    def expressions
+      Regexp.new(options.expression.split(',').join('|'), Regexp::IGNORECASE)
+    end
+
     def extract_value
       rows = []
 
@@ -33,7 +37,7 @@ module ExtractValue
 
       Dir['../**/*.csv'].each do |file|
         CSV.foreach(file) do |row|
-          if row.join =~ Regexp.new(options.expression, Regexp::IGNORECASE)
+          if row.join =~ expressions
             rows << row + [File.dirname(file).gsub('../', ''), File.basename(file)]
           end
         end
@@ -102,7 +106,7 @@ module ExtractValue
         # Find the label
         label = nil
         row.each do |cell|
-          next unless cell =~ Regexp.new(options.expression, Regexp::IGNORECASE)
+          next unless cell =~ expressions
 
           label ||= cell
           next unless label

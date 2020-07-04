@@ -15,7 +15,7 @@ module ExtractValue
       end
 
       def define_options(parser)
-        parser.banner = 'Usage: ExtractValue [options]'
+        parser.banner = 'Usage: bin/search -e agua,endesa -t 20 -m 200 -l Agua [options]'
         parser.separator ''
         parser.separator 'Specific options:'
 
@@ -45,7 +45,7 @@ module ExtractValue
       end
 
       def expression_option(parser)
-        parser.on('-e EXPRESSION', '--expression EXPRESSION', '[REQUIRED] What label you are looking for', String) do |expression|
+        parser.on('-e EXPRESSION', '--expression EXPRESSION', '[REQUIRED] What label you are looking for, coma as separator', String) do |expression|
           self.expression = expression
         end
       end
