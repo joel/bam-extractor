@@ -5,14 +5,15 @@ require 'optparse'
 module ExtractValue
   class OptparseExample
     class ScriptOptions
-      attr_accessor :expression, :verbose, :write, :min, :max, :label, :trunk
+      attr_accessor :expression, :verbose, :write, :min, :max, :label, :trunk, :source_file
 
       def initialize
         self.verbose = false
         self.write = false
         self.max = Float::INFINITY
         self.min = -Float::INFINITY
-        self.trunk = 50
+        self.trunk = 100
+        self.source_file = false
       end
 
       def define_options(parser)
@@ -86,6 +87,12 @@ module ExtractValue
       def boolean_write_option(parser)
         parser.on('-w', '--[no-]write', 'Write the result in csv') do |w|
           self.write = w
+        end
+      end
+
+      def boolean_source_file_option(parser)
+        parser.on('-d', '--[no-]source_file', 'Add Source file') do |source_file|
+          self.source_file = source_file
         end
       end
     end

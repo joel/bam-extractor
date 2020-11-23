@@ -23,7 +23,7 @@ module ExtractValue
             case row.join
             when /n26/i
               formatted_date = DateTime.strptime(cell, '%Y-%m-%d')
-            when /ing direct/i
+            when /.*(ing).*(direct).*/i
               formatted_date = DateTime.strptime(cell, '%m/%d/%Y')
             when /hellobank/i
               formatted_date = DateTime.strptime(cell, '%d/%m/%Y')

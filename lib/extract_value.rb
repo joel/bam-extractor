@@ -47,7 +47,7 @@ module ExtractValue
       Dir['../**/*.csv'].each do |file|
         CSV.foreach(file) do |row|
           if row.join =~ expressions
-            rows << row + [File.dirname(file).gsub('../', ''), File.basename(file)]
+            rows << row + [File.dirname(file).gsub('../', '').split('/')[0], File.basename(file)]
           end
         end
       end
@@ -75,10 +75,10 @@ module ExtractValue
         info[:amount] = amount
         info[:amount_formatted] = number_to_currency(info[:amount], unit: '€', separator: '.', delimiter: ',')
 
-        info[:label] = label[0..options.trunk]
+        info[:label] = options.label || label[0..options.trunk]
 
         info[:source_dir]  = row[row.size - 2]
-        info[:source_file] = row[row.size - 1]
+        info[:source_file] = row[row.size - 1] if options.source_file
 
         data << info
       end
