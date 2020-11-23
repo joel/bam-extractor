@@ -87,46 +87,19 @@ module ExtractValue
 
       puts renderer.render
 
-      begin
-        summary_rows, summary_headers = Outputs::Summary.new(raw_data).call
+      summary_rows, summary_headers = Outputs::Summary.new(raw_data).call
 
-        table = TTY::Table.new header: summary_headers, rows: summary_rows
-        renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left right])
+      table = TTY::Table.new header: summary_headers, rows: summary_rows
+      renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left right])
 
-        puts renderer.render
+      puts renderer.render
 
-        sum_per_month = Hash.new { |hash, key| hash[key] = { sum: 0, average: 0, year: nil, month: nil } }
-        current_date = nil
+      monthly_rows, monthly_headers = Outputs::Monthly.new(raw_data).call
 
-        sum = raw_data.each do |info|
-          current_date ||= info[:date].strftime('%Y-%B')
-          if current_date != info[:date].strftime('%Y-%B')
-            sum_per_month[current_date][:average] = sum_per_month[current_date][:sum] / sum_per_month[current_date].size
-            current_date = info[:date].strftime('%Y-%B')
-          end
-          sum_per_month[current_date][:sum] += info[:amount]
-          sum_per_month[current_date][:year]  = info[:date].strftime('%Y')
-          sum_per_month[current_date][:month] = info[:date].strftime('%B')
-        end
+      table = TTY::Table.new header: monthly_headers, rows: monthly_rows
+      renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left right right])
 
-        d = sum_per_month.values.map do |v|
-          [
-            v[:year],
-            v[:month],
-            number_to_currency(v[:average].round(2), unit: '€', separator: '.', delimiter: ','),
-            number_to_currency(v[:sum].round(2), unit: '€', separator: '.', delimiter: ',')
-          ]
-        end
-
-        table = TTY::Table.new header: %w[Year Month Average Sum], rows: d
-        renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left right right])
-
-        puts renderer.render
-      rescue StandardError => e
-        puts("ERROR: [#{e.message}]")
-      end
-
-      puts('Done!') if options.verbose
+      puts renderer.render
     end
 
     private
