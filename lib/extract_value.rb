@@ -26,7 +26,17 @@ module ExtractValue
     end
 
     def expressions
-      Regexp.new(options.expression.split(',').join('|'), Regexp::IGNORECASE)
+      if options.expression =~ /,/
+        Regexp.new(options.expression.split(',').join('|'), Regexp::IGNORECASE)
+      elsif options.expression =~ /\+/
+        exp = options.expression.split('+').map do |word|
+          ".*(#{word})"
+        end.join
+        exp << '.*'
+        Regexp.new(exp, Regexp::IGNORECASE)
+      else
+        Regexp.new(options.expression, Regexp::IGNORECASE)
+      end
     end
 
     def get_rows
@@ -45,10 +55,8 @@ module ExtractValue
       rows
     end
 
-    def extract_value
-      rows = get_rows
-
-      raw_data = []
+    def get_data(rows)
+      data = []
 
       rows.each do |row|
         label = Extractors::LabelExtractor.new(row, expressions).call
@@ -72,8 +80,14 @@ module ExtractValue
         info[:source_dir]  = row[row.size - 2]
         info[:source_file] = row[row.size - 1]
 
-        raw_data << info
+        data << info
       end
+
+      data
+    end
+
+    def extract_value
+      raw_data = get_data(get_rows)
 
       if raw_data.empty?
         puts('No Data')
