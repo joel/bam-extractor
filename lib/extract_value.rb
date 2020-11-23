@@ -29,7 +29,7 @@ module ExtractValue
       Regexp.new(options.expression.split(',').join('|'), Regexp::IGNORECASE)
     end
 
-    def extract_value
+    def get_rows
       rows = []
 
       puts('Searching...') if options.verbose
@@ -42,28 +42,37 @@ module ExtractValue
         end
       end
 
+      rows
+    end
+
+    def extract_value
+      rows = get_rows
+
       raw_data = []
 
       rows.each do |row|
-        info = { date: nil, amount: nil, amount_formatted: nil, source_dir: nil, source_file: nil }
+        label = LabelExtractor.new(row, expressions).call
+        next unless label
 
         date = DateExtractor.new(row).call
         next unless date
-        info[:date] = date
 
         amount = AmountExtractor.new(row).call
         next unless amount
+
+        info = { date: nil, amount: nil, amount_formatted: nil, source_dir: nil, source_file: nil }
+
+        info[:date] = date
+
         info[:amount] = amount
         info[:amount_formatted] = number_to_currency(info[:amount], unit: '€', separator: '.', delimiter: ',')
 
-        label = LabelExtractor.new(row, expressions).call
-        next unless label
         info[:label] = label[0..options.trunk]
 
         info[:source_dir]  = row[row.size - 2]
         info[:source_file] = row[row.size - 1]
 
-        raw_data << info if info[:date] && info[:amount]
+        raw_data << info
       end
 
       if raw_data.empty?
