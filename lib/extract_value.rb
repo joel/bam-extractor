@@ -50,35 +50,9 @@ module ExtractValue
       rows.each do |row|
         info = { date: nil, amount: nil, amount_formatted: nil, source_dir: nil, source_file: nil }
 
-        # Find Date
-        date = nil
-        row.each do |cell|
-          next if info[:date]
-
-          date ||= Chronic.parse(cell)
-          next unless date
-
-          puts("FOUND DATE: #{cell}") if options.verbose
-
-          begin
-            case row[row.size - 2..row.size - 1].join
-            when /n26/i
-              info[:date] = DateTime.strptime(cell, '%Y-%m-%d')
-            when /direct/i
-              info[:date] = DateTime.strptime(cell, '%m/%d/%Y')
-            when /hellobank/i
-              info[:date] = DateTime.strptime(cell, '%d/%m/%Y')
-            else
-              raise "Date Format Unknown [#{row[row.size - 1]}]"
-            end
-          rescue Date::Error => e
-            puts("ERROR: [#{cell}] => #{e.message} SOURCE: #{row[row.size - 2..row.size - 1].join}")
-          end
-
-          break
-        end
-
+        date = DateExtractor.new(row).call
         next unless date
+        info[:date] = date
 
         # Find the amount (We want to exclude the account balance!)
         amount = nil

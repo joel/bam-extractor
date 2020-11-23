@@ -14,9 +14,9 @@ module ExtractValue
       formatted_date = nil
 
       row.each do |cell|
-        next unless Chronic.parse(cell) # Filter out what is not date
+        next unless Chronic.parse(cell) # Filter Out DATE
 
-        log("FOUND DATE: #{cell}")
+        log("DATE FOUND: [#{cell}]")
 
         begin
           case row.join
@@ -27,7 +27,7 @@ module ExtractValue
           when /hellobank/i
             formatted_date = DateTime.strptime(cell, '%d/%m/%Y')
           else
-            raise "Date Format Unknown [#{row[row.size - 1]}]"
+            raise "Impossible to match a date format for [#{row}], please enter one"
           end
         rescue Date::Error => e
           log("ERROR: [#{cell}] => #{e.message} SOURCE: #{row.join}")
