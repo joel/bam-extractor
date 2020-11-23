@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    name: Run Rspec Test Suite
 
     runs-on: ubuntu-latest
 
@@ -17,9 +18,10 @@ jobs:
     # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
     # change this to (see https://github.com/ruby/setup-ruby#versioning):
     # uses: ruby/setup-ruby@v1
+    # https://github.com/ruby/setup-ruby Run lint explicitly on Ubuntu 20.04 to avoid warning
       uses: ruby/setup-ruby@43bb24d212c5a32c9b2e235d20d4daa880da8ff4
       with:
-        ruby-version: 2.7.1
+        ruby-version: 2.7.2
     - name: Install dependencies
       run: bundle install
     - name: Run tests
