@@ -5,7 +5,6 @@ loader = Zeitwerk::Loader.for_gem
 loader.setup
 
 require 'csv'
-# require 'chronic'
 require 'monetize'
 require 'action_view'
 require 'tty-table'
@@ -13,8 +12,6 @@ require 'tty-table'
 Monetize.assume_from_symbol = true
 Money.default_currency = 'EUR'
 Money.rounding_mode = BigDecimal::ROUND_HALF_UP
-
-# ExtractValue::Main.new.extract_value!
 
 module ExtractValue
   extend Configure
@@ -59,20 +56,9 @@ module ExtractValue
         info[:amount] = amount
         info[:amount_formatted] = number_to_currency(info[:amount], unit: '€', separator: '.', delimiter: ',')
 
-        # Find the label
-        label = nil
-        row.each do |cell|
-          next unless cell =~ expressions
-
-          label ||= cell
-          next unless label
-
-          puts("FOUND LABEL: [#{cell}]") if options.verbose
-          info[:label] = substitute(cell)[0..options.trunk]
-          break
-        end
-
+        label = LabelExtractor.new(row, expressions).call
         next unless label
+        info[:label] = label[0..options.trunk]
 
         info[:source_dir]  = row[row.size - 2]
         info[:source_file] = row[row.size - 1]
@@ -172,23 +158,6 @@ module ExtractValue
     end
 
     private
-
-    def substitute(content)
-      return options.label if options.label
-
-      REXPRESSIONS.each do |i|
-        return i[:r] if content =~ Regexp.new(i[:exp], Regexp::IGNORECASE)
-      end
-      content
-    end
-
-    # Regexp.escape("Pago ADY\*NETFLIX 1016GD AMSTERNL(.*)")
-    REXPRESSIONS = [
-      {
-        exp: 'NETFLIX',
-        r: 'Pago NETFLIX'
-      }
-    ].freeze
 
     attr_reader :options
   end
