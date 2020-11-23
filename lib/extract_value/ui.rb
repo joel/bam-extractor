@@ -5,23 +5,25 @@ require 'optparse'
 module ExtractValue
   class OptparseExample
     class ScriptOptions
-      attr_accessor :expression, :verbose, :write, :max, :label, :trunk
+      attr_accessor :expression, :verbose, :write, :min, :max, :label, :trunk
 
       def initialize
         self.verbose = false
         self.write = false
-        self.max = 300
+        self.max = Float::INFINITY
+        self.min = -Float::INFINITY
         self.trunk = 50
       end
 
       def define_options(parser)
-        parser.banner = 'Usage: bin/search -e agua,endesa -t 20 -m 200 -l Agua [options]'
+        parser.banner = 'Usage: bin/search --expression agua,endesa ---trunk 20 --min -200 --max 0 --label Agua [options]'
         parser.separator ''
         parser.separator 'Specific options:'
 
         # add additional options
         expression_option(parser)
         max_option(parser)
+        min_option(parser)
         label_option(parser)
         trunk_option(parser)
 
@@ -45,7 +47,7 @@ module ExtractValue
       end
 
       def expression_option(parser)
-        parser.on('-e EXPRESSION', '--expression EXPRESSION', '[REQUIRED] What label you are looking for, coma as separator', String) do |expression|
+        parser.on('-e EXPRESSION', '--expression EXPRESSION', '[REQUIRED] What label you are looking for, coma as separator (OR)', String) do |expression|
           self.expression = expression
         end
       end
@@ -53,6 +55,12 @@ module ExtractValue
       def max_option(parser)
         parser.on('-m MAX', '--max MAX', '[OPTIONAL] Keep only amount less than', Integer) do |max|
           self.max = max
+        end
+      end
+
+      def min_option(parser)
+        parser.on('-a MIN', '--min MIN', '[OPTIONAL] Keep only amount greater than', Integer) do |min|
+          self.min = min
         end
       end
 
@@ -111,6 +119,9 @@ module ExtractValue
     end
 
     def search
+      ExtractValue.configure do |conf|
+        conf.verbose = options.verbose
+      end
       ExtractValue::Main.new(options).extract_value
     end
 

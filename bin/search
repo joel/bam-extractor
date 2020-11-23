@@ -15,7 +15,7 @@ if ! exists rbenv; then
 fi
 
 if exists rbenv; then
-  export RBENV_VERSION=2.7.1
+  export RBENV_VERSION=2.7.2
 fi
 
 ## TODO: make the all direction in the path

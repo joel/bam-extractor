@@ -13,7 +13,7 @@ if !exists 'rbenv'
 end
 
 if exists 'rbenv'
-  set -l RBENV_VERSION 2.7.1
+  set -l RBENV_VERSION 2.7.2
 end
 
 ## TODO: make the all direction in the path

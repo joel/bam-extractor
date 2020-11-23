@@ -17,6 +17,8 @@ Money.rounding_mode = BigDecimal::ROUND_HALF_UP
 # ExtractValue::Main.new.extract_value!
 
 module ExtractValue
+  extend Configure
+
   class Error < StandardError; end
 
   class Main
@@ -92,8 +94,8 @@ module ExtractValue
           puts("FOUND AMOUNT: #{cell}") if options.verbose
 
           # If the amount is superior to the max defined it might be the balance account
-          if amount.fractional == 0 || amount.fractional.abs > options.max * 100
-            puts("AMOUNT FILTERED OUT: #{cell}") if options.verbose
+          if amount.fractional == 0 || amount.fractional < options.min * 100 || options.max * 100 < amount.fractional
+            puts("AMOUNT FILTERED OUT: #{amount.fractional.to_f / 100}") if options.verbose
             amount = nil
             next
           else
@@ -102,6 +104,8 @@ module ExtractValue
             break
           end
         end
+
+        next unless amount
 
         # Find the label
         label = nil
@@ -115,6 +119,8 @@ module ExtractValue
           info[:label] = substitute(cell)[0..options.trunk]
           break
         end
+
+        next unless label
 
         info[:source_dir]  = row[row.size - 2]
         info[:source_file] = row[row.size - 1]
