@@ -121,6 +121,7 @@ module ExtractValue
     def search
       ExtractValue.configure do |conf|
         conf.verbose = options.verbose
+        conf.options = options
       end
       ExtractValue::Main.new(options).extract_value
     end

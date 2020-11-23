@@ -3,12 +3,7 @@ module ExtractValue
     describe '#call' do
       let(:date) { subject.call }
 
-      subject do
-        ExtractValue.configure do |conf|
-          conf.verbose = true
-        end
-        DateExtractor.new(row)
-      end
+      subject { described_class.new(row) }
 
       context 'With a Date Given' do
         [

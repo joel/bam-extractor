@@ -5,7 +5,7 @@ loader = Zeitwerk::Loader.for_gem
 loader.setup
 
 require 'csv'
-require 'chronic'
+# require 'chronic'
 require 'monetize'
 require 'action_view'
 require 'tty-table'
@@ -54,32 +54,10 @@ module ExtractValue
         next unless date
         info[:date] = date
 
-        # Find the amount (We want to exclude the account balance!)
-        amount = nil
-        row.each do |cell|
-          next if info[:amount]
-
-          next unless cell =~ /\./
-          next unless cell.gsub('.', '') =~ /[0-9]/
-
-          amount ||= Monetize.parse(cell)
-          next unless amount
-
-          puts("FOUND AMOUNT: #{cell}") if options.verbose
-
-          # If the amount is superior to the max defined it might be the balance account
-          if amount.fractional == 0 || amount.fractional < options.min * 100 || options.max * 100 < amount.fractional
-            puts("AMOUNT FILTERED OUT: #{amount.fractional.to_f / 100}") if options.verbose
-            amount = nil
-            next
-          else
-            info[:amount] = amount.fractional.to_f / 100
-            info[:amount_formatted] = number_to_currency(info[:amount], unit: '€', separator: '.', delimiter: ',')
-            break
-          end
-        end
-
+        amount = AmountExtractor.new(row).call
         next unless amount
+        info[:amount] = amount
+        info[:amount_formatted] = number_to_currency(info[:amount], unit: '€', separator: '.', delimiter: ',')
 
         # Find the label
         label = nil
