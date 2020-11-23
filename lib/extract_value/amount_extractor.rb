@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# require 'action_view'
-
 module ExtractValue
   class AmountExtractor
-    # include ActionView::Helpers::NumberHelper
 
     def initialize(row)
       @row = row
