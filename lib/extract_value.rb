@@ -88,15 +88,9 @@ module ExtractValue
       puts renderer.render
 
       begin
-        sum = raw_data.map do |info|
-          info[:amount]
-        end.reduce(:+)
-        average = sum / raw_data.size
+        summary_rows, summary_headers = Outputs::Summary.new(raw_data).call
 
-        table = TTY::Table.new header: %w[Average Sum], rows: [[
-          number_to_currency(average.round(2), unit: '€', separator: '.', delimiter: ','),
-          number_to_currency(sum.round(2), unit: '€', separator: '.', delimiter: ',')
-        ]]
+        table = TTY::Table.new header: summary_headers, rows: summary_rows
         renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left right])
 
         puts renderer.render
