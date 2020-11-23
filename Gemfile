@@ -4,8 +4,8 @@ source "https://rubygems.org"
 gemspec
 
 gem "rake", "~> 12.0"
-gem "pry-byebug"
+gem "pry-byebug", "~> 3.9"
 gem "rspec", "~> 3.0"
-gem 'chronic'
-gem 'monetize'
-gem 'actionview'
+gem 'chronic', '~> 0.10'
+gem 'monetize', '~> 1.9'
+gem 'actionview', '~> 6'
