@@ -10,7 +10,7 @@ module ExtractValue
     end
 
     # Find Date in the row
-    def call()
+    def call
       formatted_date = nil
 
       row.each do |cell|
