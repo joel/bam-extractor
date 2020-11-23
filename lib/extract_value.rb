@@ -51,13 +51,13 @@ module ExtractValue
       raw_data = []
 
       rows.each do |row|
-        label = LabelExtractor.new(row, expressions).call
+        label = Extractors::LabelExtractor.new(row, expressions).call
         next unless label
 
-        date = DateExtractor.new(row).call
+        date = Extractors::DateExtractor.new(row).call
         next unless date
 
-        amount = AmountExtractor.new(row).call
+        amount = Extractors::AmountExtractor.new(row).call
         next unless amount
 
         info = { date: nil, amount: nil, amount_formatted: nil, source_dir: nil, source_file: nil }
@@ -80,40 +80,9 @@ module ExtractValue
         return
       end
 
-      raw_data.sort! do |x, y|
-        x[:date] <=> y[:date]
-      end
+      detail_rows, detail_headers = Outputs::Details.new(raw_data).call
 
-      if options.write
-        header = %w[Date Amount Source]
-        CSV.open('extract.csv', 'w') do |csv|
-          csv << header
-
-          raw_data.each do |entry|
-            csv << [entry[:date], entry[:amount], entry[:source_file]]
-          end
-        end
-      end
-
-      data = []
-      raw_data.each do |info|
-        data << [
-          (info[:label]).to_s,
-          info[:date].strftime('%Y/%m/%d'),
-          info[:date].strftime('%Y'),
-          info[:date].strftime('%B'),
-          info[:date].strftime('%A'),
-          (info[:amount_formatted]).to_s,
-          info[:source_dir],
-          info[:source_file]
-        ]
-      end
-
-      data.sort! do |x, y|
-        x[1] <=> y[1]
-      end
-
-      table = TTY::Table.new header: ['Label', 'Date', 'Year', 'Month', 'Day', 'Amount', 'Source Dir', 'Source File'], rows: data
+      table = TTY::Table.new header: detail_headers, rows: detail_rows
       renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left left left left right left left])
 
       puts renderer.render
