@@ -78,7 +78,7 @@ module ExtractValue
 
       context 'Example 1' do
         let(:expression) { 'prime' }
-        let(:options) { OpenStruct.new(expression: expression) }
+        let(:options) { OpenStruct.new(expression: expression, source_file: true) }
 
         it do
           expect(subject).to receive(:get_rows) { rows }
