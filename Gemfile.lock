@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    bam_lookup (0.1.0)
+    bam_lookup (0.2.0)
       tty-table (~> 0.11)
       zeitwerk (~> 2.3)
 
@@ -78,8 +78,8 @@ GEM
       unicode_utils (~> 1.4)
     strings-ansi (0.2.0)
     thread_safe (0.3.6)
-    tty-color (0.5.1)
-    tty-screen (0.7.1)
+    tty-color (0.5.2)
+    tty-screen (0.8.1)
     tty-table (0.11.0)
       equatable (~> 0.6)
       necromancer (~> 0.5)
@@ -97,8 +97,8 @@ PLATFORMS
 
 DEPENDENCIES
   actionview (~> 6)
-  chronic (~> 0.10)
   bam_lookup!
+  chronic (~> 0.10)
   monetize (~> 1.9)
   pry-byebug (~> 3.9)
   rake (~> 12.0)
