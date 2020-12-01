@@ -82,8 +82,8 @@ module BamLookup
 
         it do
           expect(subject).to receive(:get_rows) { rows }
-          info = subject.get_rows
-          expect(subject.get_data(info)).to eql(data)
+          info = subject.send(:get_rows)
+          expect(subject.send(:get_data, info)).to eql(data)
         end
       end
     end

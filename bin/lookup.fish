@@ -17,4 +17,4 @@ if exists 'rbenv'
 end
 
 ## TODO: make the all direction in the path
-bundle exec ruby ~/Documents/Banque/bam_lookup/bin/search.rb $argv
+bundle exec ruby ~/WorkSpace/Bank/bam_lookup/bin/lookup.rb $argv
