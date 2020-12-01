@@ -19,7 +19,7 @@ if exists rbenv; then
 fi
 
 export HOWBREW_TAPS_DIRECTORY=/usr/local/Homebrew/Library/Taps
-export PWD_REPOSITORY_NAME=joel/bam-lookup
+export PWD_REPOSITORY_NAME=joel/homebrew-bam-lookup
 
 bundle exec ruby $HOWBREW_TAPS_DIRECTORY/$PWD_REPOSITORY_NAME/bin/lookup.rb $@
 

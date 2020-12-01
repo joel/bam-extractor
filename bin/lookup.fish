@@ -17,4 +17,8 @@ if exists 'rbenv'
 end
 
 ## TODO: make the all direction in the path
-bundle exec ruby ~/WorkSpace/Bank/bam_lookup/bin/lookup.rb $argv
+
+set -l HOWBREW_TAPS_DIRECTORY /usr/local/Homebrew/Library/Taps
+set -l PWD_REPOSITORY_NAME joel/homebrew-bam-lookup
+
+bundle exec ruby $HOWBREW_TAPS_DIRECTORY/$PWD_REPOSITORY_NAME/bin/lookup.rb $argv
