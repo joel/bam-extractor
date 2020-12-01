@@ -17,7 +17,7 @@ module BamLookup
       end
 
       def define_options(parser)
-        parser.banner = 'Usage: bin/search --expression agua,endesa ---trunk 20 --min -200 --max 0 --label Agua [options]'
+        parser.banner = 'Usage: bin/lookup --expression agua,endesa ---trunk 20 --min -200 --max 0 --label Agua [options]'
         parser.separator ''
         parser.separator 'Specific options:'
 
@@ -30,6 +30,7 @@ module BamLookup
 
         boolean_verbose_option(parser)
         boolean_write_option(parser)
+        boolean_source_file_option(parser)
 
         parser.separator ''
         parser.separator 'Common options:'
@@ -125,7 +126,7 @@ module BamLookup
       end
     end
 
-    def search
+    def lookup
       BamLookup.configure do |conf|
         conf.verbose = options.verbose
         conf.options = options

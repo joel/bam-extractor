@@ -2,7 +2,17 @@ require "bundler/setup"
 require "bam_lookup"
 require "pry"
 
+BamLookup.configure do |conf|
+  conf.file_directory = '../fixtures'
+end
+
 RSpec.configure do |config|
+  # config.around(:each) do |example|
+  #   puts "around each before"
+  #   example.run
+  #   puts "around each after"
+  # end
+
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
 
@@ -11,7 +21,7 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
-  config.filter_run :focus => true
-  config.run_all_when_everything_filtered = true
+    config.filter_run :focus => true
+    config.run_all_when_everything_filtered = true
   end
 end

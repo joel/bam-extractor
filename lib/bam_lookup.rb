@@ -25,67 +25,6 @@ module BamLookup
       @options = options
     end
 
-    def expressions
-      if options.expression =~ /,/
-        Regexp.new(options.expression.split(',').join('|'), Regexp::IGNORECASE)
-      elsif options.expression =~ /\+/
-        exp = options.expression.split('+').map do |word|
-          ".*(#{word})"
-        end.join
-        exp << '.*'
-        Regexp.new(exp, Regexp::IGNORECASE)
-      else
-        Regexp.new(options.expression, Regexp::IGNORECASE)
-      end
-    end
-
-    def get_rows
-      rows = []
-
-      puts('Searching...') if options.verbose
-
-      Dir['../**/*.csv'].each do |file|
-        CSV.foreach(file) do |row|
-          if row.join =~ expressions
-            rows << row + [File.dirname(file).gsub('../', '').split('/')[0], File.basename(file)]
-          end
-        end
-      end
-
-      rows
-    end
-
-    def get_data(rows)
-      data = []
-
-      rows.each do |row|
-        label = Lookups::Label.new(row, expressions).call
-        next unless label
-
-        date = Lookups::Date.new(row).call
-        next unless date
-
-        amount = Lookups::Amount.new(row).call
-        next unless amount
-
-        info = { date: nil, amount: nil, amount_formatted: nil, source_dir: nil, source_file: nil }
-
-        info[:date] = date
-
-        info[:amount] = amount
-        info[:amount_formatted] = number_to_currency(info[:amount], unit: '€', separator: '.', delimiter: ',')
-
-        info[:label] = options.label || label[0..options.trunk]
-
-        info[:source_dir]  = row[row.size - 2]
-        info[:source_file] = row[row.size - 1] if options.source_file
-
-        data << info
-      end
-
-      data
-    end
-
     def bam_lookup
       raw_data = get_data(get_rows)
 
@@ -116,8 +55,72 @@ module BamLookup
       puts renderer.render
     end
 
+    def expressions
+      if options.expression =~ /,/
+        Regexp.new(options.expression.split(',').join('|'), Regexp::IGNORECASE)
+      elsif options.expression =~ /\+/
+        exp = options.expression.split('+').map do |word|
+          ".*(#{word})"
+        end.join
+        exp << '.*'
+        Regexp.new(exp, Regexp::IGNORECASE)
+      else
+        Regexp.new(options.expression, Regexp::IGNORECASE)
+      end
+    end
+
     private
 
     attr_reader :options
+
+    def get_rows
+      rows = []
+
+      puts('Searching...') if options.verbose
+
+      Dir["#{BamLookup.configuration.file_directory}/**/*.csv"].each do |file|
+        CSV.foreach(file) do |row|
+          if row.join =~ expressions
+            directories = File.dirname(file).split('/')
+            rows << row + [
+              "#{directories[-2]}/#{directories[-1]}", File.basename(file)
+            ]
+          end
+        end
+      end
+
+      rows
+    end
+
+    def get_data(rows)
+      data = []
+
+      rows.each do |row|
+        label = Lookups::Label.new(row, expressions).call
+        next unless label
+
+        date = Lookups::Date.new(row).call
+        next unless date
+
+        amount = Lookups::Amount.new(row).call
+        next unless amount
+
+        info = { date: nil, amount: nil, amount_formatted: nil, source_dir: nil, source_file: nil }
+
+        info[:date] = date
+
+        info[:amount] = amount
+        info[:amount_formatted] = number_to_currency(info[:amount], unit: '€', separator: '.', delimiter: ',')
+
+        info[:label] = options.label || label[0..options.trunk]
+
+        info[:source_dir]  = row[-2]
+        info[:source_file] = row[-1] if options.source_file
+
+        data << info
+      end
+
+      data
+    end
   end
 end

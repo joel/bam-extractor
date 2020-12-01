@@ -1,9 +1,9 @@
 # BamLookup
 
-BAMLookup is a CLI let you search into CSV files your Bank Account Movements.
+BAMLookup is a CLI let you lookup into CSV files your Bank Account Movements.
 
 ```
-bin/search --expression amazon+prime --min -500 --max 0 --no-verbose --trunk 50 --label amazon_prime                                    
+bin/lookup --expression amazon+prime --min -500 --max 0 --no-verbose --trunk 50 --label amazon_prime --source_file  
 
 ┌────────────┬──────────┬────┬─────────┬──────┬───────┬──────────┬───────────┐
 │Label       │Date      │Year│Month    │Day   │ Amount│Source Dir│Source File│
@@ -26,8 +26,8 @@ bin/search --expression amazon+prime --min -500 --max 0 --no-verbose --trunk 50 
 ```
 
 ```
-bin/search                                                                                                                                       Tue Dec  1 15:35:54 2020
-Usage: bin/search --expression agua,endesa ---trunk 20 --min -200 --max 0 --label Agua [options]
+bin/lookup                                                                                                                                       Tue Dec  1 15:35:54 2020
+Usage: bin/lookup --expression agua,endesa ---trunk 20 --min -200 --max 0 --label Agua [options]
 
 Specific options:
     -e, --expression EXPRESSION      [REQUIRED] What label you are looking for, coma as separator (OR)
