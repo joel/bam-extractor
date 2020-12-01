@@ -1,6 +1,6 @@
-module ExtractValue
-  module Extractors
-    RSpec.describe DateExtractor do
+module BamLookup
+  module Lookups
+    RSpec.describe Date do
       describe '#call' do
         let(:date) { subject.call }
 

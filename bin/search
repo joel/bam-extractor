@@ -19,7 +19,7 @@ if exists rbenv; then
 fi
 
 ## TODO: make the all direction in the path
-bundle exec ruby ~/Documents/Banque/extract_value/bin/search.rb $@
+bundle exec ruby ~/Documents/Banque/bam_lookup/bin/search.rb $@
 
 if exists rbenv; then
   export RBENV_VERSION=

@@ -1,8 +1,8 @@
-require_relative 'lib/extract_value/version'
+require_relative 'lib/bam_lookup/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "extract_value"
-  spec.version       = ExtractValue::VERSION
+  spec.name          = "bam_lookup"
+  spec.version       = BamLookup::VERSION
   spec.authors       = ["Joel AZEMAR"]
   spec.email         = ["joel.azemar@gmail.com"]
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module ExtractValue
-  module Outputs
+module BamLookup
+  module Views
     class Details
 
       def headers

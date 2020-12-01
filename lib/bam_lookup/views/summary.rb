@@ -2,8 +2,8 @@
 
 require 'action_view'
 
-module ExtractValue
-  module Outputs
+module BamLookup
+  module Views
     class Summary
       include ActionView::Helpers::NumberHelper
 

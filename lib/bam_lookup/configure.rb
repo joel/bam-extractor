@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ExtractValue
+module BamLookup
   module Configure
 
     attr_writer :configuration

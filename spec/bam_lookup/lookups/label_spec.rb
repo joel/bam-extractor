@@ -1,6 +1,6 @@
-module ExtractValue
-  module Extractors
-    RSpec.describe LabelExtractor do
+module BamLookup
+  module Lookups
+    RSpec.describe Label do
       describe '#call' do
         let(:label) { subject.call }
 

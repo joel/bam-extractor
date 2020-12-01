@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module ExtractValue
-  module Extractors
-    class AmountExtractor
+module BamLookup
+  module Lookups
+    class Amount
 
       def initialize(row)
         @row = row
@@ -40,11 +40,11 @@ module ExtractValue
       attr_reader :row
 
       def log(msg)
-        ExtractValue.configuration.logger.info(msg)
+        BamLookup.configuration.logger.info(msg)
       end
 
       def options
-        ExtractValue.configuration.options
+        BamLookup.configuration.options
       end
 
     end

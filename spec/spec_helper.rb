@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "extract_value"
+require "bam_lookup"
 require "pry"
 
 RSpec.configure do |config|

@@ -2,7 +2,7 @@
 
 require 'optparse'
 
-module ExtractValue
+module BamLookup
   class OptparseExample
     class ScriptOptions
       attr_accessor :expression, :verbose, :write, :min, :max, :label, :trunk, :source_file
@@ -42,7 +42,7 @@ module ExtractValue
         end
         # Another typical switch to print the version.
         parser.on_tail('--version', 'Show version') do
-          puts ExtractValue::VERSION
+          puts BamLookup::VERSION
           exit
         end
       end
@@ -126,11 +126,11 @@ module ExtractValue
     end
 
     def search
-      ExtractValue.configure do |conf|
+      BamLookup.configure do |conf|
         conf.verbose = options.verbose
         conf.options = options
       end
-      ExtractValue::Main.new(options).extract_value
+      BamLookup::Main.new(options).bam_lookup
     end
 
     def help(opts)

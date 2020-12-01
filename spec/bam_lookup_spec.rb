@@ -1,10 +1,10 @@
-module ExtractValue
+module BamLookup
   RSpec.describe Main do
     describe '#expressions' do
       let(:options) { OpenStruct.new(expression: expression) }
 
       subject do
-        ExtractValue.configure do |conf|
+        BamLookup.configure do |conf|
           conf.verbose = true
         end
         described_class.new(options)
@@ -28,7 +28,7 @@ module ExtractValue
 
     end
 
-    describe '#extract_value' do
+    describe '#bam_lookup' do
       let(:rows) do
         [
           [
@@ -69,7 +69,7 @@ module ExtractValue
       end
 
       subject do
-        ExtractValue.configure do |conf|
+        BamLookup.configure do |conf|
           conf.options = OpenStruct.new(min: -50, max: 0)
           conf.verbose = false
         end

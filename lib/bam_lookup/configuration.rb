@@ -2,7 +2,7 @@
 
 require 'securerandom'
 
-module ExtractValue
+module BamLookup
   class Configuration
     attr_accessor :verbose, :logger, :options
 

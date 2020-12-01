@@ -2,9 +2,9 @@
 
 require 'chronic'
 
-module ExtractValue
-  module Extractors
-    class LabelExtractor
+module BamLookup
+  module Lookups
+    class Label
 
       def initialize(row, expressions)
         @row = row
@@ -33,7 +33,7 @@ module ExtractValue
       attr_reader :row, :expressions
 
       def log(msg)
-        ExtractValue.configuration.logger.info(msg)
+        BamLookup.configuration.logger.info(msg)
       end
 
     end

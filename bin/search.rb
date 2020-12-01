@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/extract_value.rb'
+require_relative '../lib/bam_lookup.rb'
 
 require 'pry'
 
-retreiver = ExtractValue::Ui.new
+retreiver = BamLookup::Ui.new
 retreiver.search

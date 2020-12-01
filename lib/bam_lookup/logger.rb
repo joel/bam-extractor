@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module ExtractValue
+module BamLookup
   class Logger
     def info(msg)
-      return unless ExtractValue.configuration.verbose
+      return unless BamLookup.configuration.verbose
 
       puts(msg)
     end

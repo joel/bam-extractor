@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    extract_value (0.1.0)
+    bam_lookup (0.1.0)
       tty-table (~> 0.11)
       zeitwerk (~> 2.3)
 
@@ -98,7 +98,7 @@ PLATFORMS
 DEPENDENCIES
   actionview (~> 6)
   chronic (~> 0.10)
-  extract_value!
+  bam_lookup!
   monetize (~> 1.9)
   pry-byebug (~> 3.9)
   rake (~> 12.0)

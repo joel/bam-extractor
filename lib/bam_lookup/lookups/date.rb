@@ -2,9 +2,9 @@
 
 require 'chronic'
 
-module ExtractValue
-  module Extractors
-    class DateExtractor
+module BamLookup
+  module Lookups
+    class Date
 
       def initialize(row)
         @row = row
@@ -45,7 +45,7 @@ module ExtractValue
       attr_reader :row
 
       def log(msg)
-        ExtractValue.configuration.logger.info(msg)
+        BamLookup.configuration.logger.info(msg)
       end
     end
   end

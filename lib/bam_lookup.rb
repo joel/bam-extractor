@@ -13,7 +13,7 @@ Monetize.assume_from_symbol = true
 Money.default_currency = 'EUR'
 Money.rounding_mode = BigDecimal::ROUND_HALF_UP
 
-module ExtractValue
+module BamLookup
   extend Configure
 
   class Error < StandardError; end
@@ -59,13 +59,13 @@ module ExtractValue
       data = []
 
       rows.each do |row|
-        label = Extractors::LabelExtractor.new(row, expressions).call
+        label = Lookups::Label.new(row, expressions).call
         next unless label
 
-        date = Extractors::DateExtractor.new(row).call
+        date = Lookups::Date.new(row).call
         next unless date
 
-        amount = Extractors::AmountExtractor.new(row).call
+        amount = Lookups::Amount.new(row).call
         next unless amount
 
         info = { date: nil, amount: nil, amount_formatted: nil, source_dir: nil, source_file: nil }
@@ -86,7 +86,7 @@ module ExtractValue
       data
     end
 
-    def extract_value
+    def bam_lookup
       raw_data = get_data(get_rows)
 
       if raw_data.empty?
@@ -94,21 +94,21 @@ module ExtractValue
         return
       end
 
-      detail_rows, detail_headers = Outputs::Details.new(raw_data).call
+      detail_rows, detail_headers = Views::Details.new(raw_data).call
 
       table = TTY::Table.new header: detail_headers, rows: detail_rows
       renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left left left left right left left])
 
       puts renderer.render
 
-      summary_rows, summary_headers = Outputs::Summary.new(raw_data).call
+      summary_rows, summary_headers = Views::Summary.new(raw_data).call
 
       table = TTY::Table.new header: summary_headers, rows: summary_rows
       renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left right])
 
       puts renderer.render
 
-      monthly_rows, monthly_headers = Outputs::Monthly.new(raw_data).call
+      monthly_rows, monthly_headers = Views::Monthly.new(raw_data).call
 
       table = TTY::Table.new header: monthly_headers, rows: monthly_rows
       renderer = TTY::Table::Renderer::Unicode.new(table, alignments: %i[left left right right])

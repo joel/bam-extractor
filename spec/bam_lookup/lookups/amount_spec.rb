@@ -1,11 +1,11 @@
-module ExtractValue
-  module Extractors
-    RSpec.describe AmountExtractor do
+module BamLookup
+  module Lookups
+    RSpec.describe Amount do
       describe '#call' do
         let(:amount) { subject.call }
 
         subject do
-          ExtractValue.configure do |conf|
+          BamLookup.configure do |conf|
             conf.options = OpenStruct.new(min: min, max: max)
             # conf.verbose = true
           end

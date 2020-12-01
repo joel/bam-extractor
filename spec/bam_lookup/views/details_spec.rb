@@ -1,5 +1,5 @@
-module ExtractValue
-  module Outputs
+module BamLookup
+  module Views
     RSpec.describe Details do
       describe '#call' do
         let(:output) { subject.call }
