@@ -78,7 +78,9 @@ module BamLookup
 
       puts('Searching...') if options.verbose
 
-      Dir["#{BamLookup.configuration.file_directory}/**/*.csv"].each do |file|
+      csv_files_directory = options.source_directory || BamLookup.configuration.file_directory
+
+      Dir["#{csv_files_directory}/**/*.csv"].each do |file|
         CSV.foreach(file) do |row|
           if row.join =~ expressions
             directories = File.dirname(file).split('/')

@@ -1,9 +1,9 @@
-# BamLookup
+# Bank Account Movements Lookup
 
-BAMLookup is a CLI let you lookup into CSV files your Bank Account Movements.
+BAM-Lookup is a CLI let you lookup into CSV files your Bank Account Movements.
 
 ```
-bin/lookup --expression amazon+prime --min -500 --max 0 --no-verbose --trunk 50 --label amazon_prime --source_file  
+lookup --expression amazon+prime --min -500 --max 0 --no-verbose --trunk 50 --label amazon_prime --source_file  
 
 ┌────────────┬──────────┬────┬─────────┬──────┬───────┬──────────┬───────────┐
 │Label       │Date      │Year│Month    │Day   │ Amount│Source Dir│Source File│
@@ -26,8 +26,7 @@ bin/lookup --expression amazon+prime --min -500 --max 0 --no-verbose --trunk 50 
 ```
 
 ```
-bin/lookup                                                                                                                                       Tue Dec  1 15:35:54 2020
-Usage: bin/lookup --expression agua,endesa ---trunk 20 --min -200 --max 0 --label Agua [options]
+Usage: lookup --expression agua,endesa ---trunk 20 --min -200 --max 0 --label Agua [options]
 
 Specific options:
     -e, --expression EXPRESSION      [REQUIRED] What label you are looking for, coma as separator (OR)
@@ -45,6 +44,15 @@ Common options:
 
 ## Installation
 
+### Homebrew 
+
+```
+brew tap joel/homebrew-bam-lookup git@github.com:joel/homebrew-bam-lookup.git
+brew install lookup
+```
+
+### Rubygem 
+
 Add this line to your application's Gemfile:
 
 ```ruby
@@ -58,6 +66,12 @@ And then execute:
 Or install it yourself as:
 
     $ gem install bam_lookup
+
+## Configuration
+
+You can indicate the directory where the CSV files lies [here](https://github.com/joel/bam-lookup/blob/f968a23450b021f1d173bbcc6770bef0b7f7b309/bin/lookup.rb#L8)
+
+or pass the path with `--source_directory`
 
 ## Usage
 
