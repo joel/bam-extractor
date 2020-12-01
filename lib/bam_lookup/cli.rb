@@ -5,7 +5,7 @@ require 'optparse'
 module BamLookup
   class OptparseExample
     class ScriptOptions
-      attr_accessor :expression, :verbose, :write, :min, :max, :label, :trunk, :source_file
+      attr_accessor :expression, :verbose, :write, :min, :max, :label, :trunk, :source_file, :source_directory
 
       def initialize
         self.verbose = false
@@ -14,6 +14,7 @@ module BamLookup
         self.min = -Float::INFINITY
         self.trunk = 100
         self.source_file = false
+        self.source_directory = nil
       end
 
       def define_options(parser)
@@ -27,6 +28,7 @@ module BamLookup
         min_option(parser)
         label_option(parser)
         trunk_option(parser)
+        source_directory_option(parser)
 
         boolean_verbose_option(parser)
         boolean_write_option(parser)
@@ -75,6 +77,12 @@ module BamLookup
       def label_option(parser)
         parser.on('-l LABEL', '--label LABEL', '[OPTIONAL] Labelled the items', String) do |label|
           self.label = label
+        end
+      end
+
+      def source_directory_option(parser)
+        parser.on('-s SOURCE_DIRECTORY', '--source_directory SOURCE_DIRECTORY', '[OPTIONAL] Where the CVS files are', String) do |source_directory|
+          self.source_directory = source_directory
         end
       end
 
