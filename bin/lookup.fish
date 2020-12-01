@@ -21,4 +21,4 @@ end
 set -l HOWBREW_TAPS_DIRECTORY /usr/local/Homebrew/Library/Taps
 set -l PWD_REPOSITORY_NAME joel/homebrew-bam-lookup
 
-bundle exec ruby $HOWBREW_TAPS_DIRECTORY/$PWD_REPOSITORY_NAME/bin/lookup.rb $argv
+ruby $HOWBREW_TAPS_DIRECTORY/$PWD_REPOSITORY_NAME/bin/lookup.rb $argv
