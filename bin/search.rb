@@ -4,5 +4,5 @@ require_relative '../lib/bam_lookup.rb'
 
 require 'pry'
 
-retreiver = BamLookup::Ui.new
+retreiver = BamLookup::Cli.new
 retreiver.search

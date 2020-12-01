@@ -114,7 +114,7 @@ module BamLookup
     attr_reader :parser, :options, :option_parser
   end # class OptparseExample
 
-  class Ui
+  class Cli
     def initialize
       example = OptparseExample.new
       @options = example.parse(ARGV)

@@ -1,8 +1,47 @@
 # BamLookup
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/bam_lookup`. To experiment with that code, run `bin/console` for an interactive prompt.
+BAMLookup is a CLI let you search into CSV files your Bank Account Movements.
 
-TODO: Delete this and the text above, and describe your gem
+```
+bin/search --expression amazon+prime --min -500 --max 0 --no-verbose --trunk 50 --label amazon_prime                                    
+
+┌────────────┬──────────┬────┬─────────┬──────┬───────┬──────────┬───────────┐
+│Label       │Date      │Year│Month    │Day   │ Amount│Source Dir│Source File│
+├────────────┼──────────┼────┼─────────┼──────┼───────┼──────────┼───────────┤
+│amazon_prime│2019/09/02│2019│September│Monday│-€36.00│HelloBank │           │
+│amazon_prime│2019/09/29│2019│September│Sunday│-€36.00│N26       │           │
+│amazon_prime│2020/08/30│2020│August   │Sunday│-€36.00│N26       │           │
+└────────────┴──────────┴────┴─────────┴──────┴───────┴──────────┴───────────┘
+┌───────┬────────┐
+│Average│Sum     │
+├───────┼────────┤
+│-€36.00│-€108.00│
+└───────┴────────┘
+┌────┬─────────┬───────┬───────┐
+│Year│Month    │Average│    Sum│
+├────┼─────────┼───────┼───────┤
+│2019│September│-€36.00│-€72.00│
+│2020│August   │  €0.00│-€36.00│
+└────┴─────────┴───────┴───────┘
+```
+
+```
+bin/search                                                                                                                                       Tue Dec  1 15:35:54 2020
+Usage: bin/search --expression agua,endesa ---trunk 20 --min -200 --max 0 --label Agua [options]
+
+Specific options:
+    -e, --expression EXPRESSION      [REQUIRED] What label you are looking for, coma as separator (OR)
+    -m, --max MAX                    [OPTIONAL] Keep only amount less than
+    -a, --min MIN                    [OPTIONAL] Keep only amount greater than
+    -l, --label LABEL                [OPTIONAL] Labelled the items
+    -t, --trunk TRUNK                [OPTIONAL] Trunk label
+    -v, --[no-]verbose               Run verbosely
+    -w, --[no-]write                 Write the result in csv
+
+Common options:
+    -h, --help                       Show this message
+        --version                    Show version
+```
 
 ## Installation
 
