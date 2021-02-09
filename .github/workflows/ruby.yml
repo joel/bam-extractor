@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        ruby: ['3.0', jruby, truffleruby-head]
+        ruby: ['3.0', truffleruby-head]
 
     runs-on: ${{ matrix.os }}
 
