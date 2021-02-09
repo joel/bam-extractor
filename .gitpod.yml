@@ -1,4 +1,4 @@
 image:
   file: .gitpod.Dockerfile
 tasks:
-  - init: bundle install
+  - init: bundle install && gem uninstall minitest
