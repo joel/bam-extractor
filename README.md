@@ -1,9 +1,13 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/joel/homebrew-bam-lookup)
+
+![Ruby](https://github.com/joel/homebrew-bam-lookup/workflows/Ruby/badge.svg)
+
 # Bank Account Movements Lookup
 
 BAM-Lookup is a CLI let you lookup into CSV files your Bank Account Movements.
 
 ```
-lookup --expression amazon+prime --min -500 --max 0 --no-verbose --trunk 50 --label amazon_prime --source_file  
+lookup --expression amazon+prime --min -500 --max 0 --no-verbose --trunk 50 --label amazon_prime --source_file
 
 ┌────────────┬──────────┬────┬─────────┬──────┬───────┬──────────┬───────────┐
 │Label       │Date      │Year│Month    │Day   │ Amount│Source Dir│Source File│
@@ -44,14 +48,14 @@ Common options:
 
 ## Installation
 
-### Homebrew 
+### Homebrew
 
 ```
 brew tap joel/homebrew-bam-lookup git@github.com:joel/homebrew-bam-lookup.git
 brew install lookup
 ```
 
-### Rubygem 
+### Rubygem
 
 Add this line to your application's Gemfile:
 

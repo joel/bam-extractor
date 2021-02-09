@@ -1,6 +1,10 @@
 require "bundler/setup"
 require "bam_lookup"
-require "pry"
+
+begin
+  require 'pry'
+rescue LoadError
+end
 
 BamLookup.configure do |conf|
   conf.file_directory = '../fixtures'

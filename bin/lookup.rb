@@ -2,7 +2,10 @@
 
 require_relative '../lib/bam_lookup.rb'
 
-require 'pry'
+begin
+  require 'pry'
+rescue LoadError
+end
 
 BamLookup.configure do |conf|
   conf.file_directory = "#{File.expand_path('~')}/Documents/Banque"

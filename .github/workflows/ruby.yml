@@ -1,3 +1,10 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
+# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
+
 name: Ruby
 
 on:
@@ -8,21 +15,25 @@ on:
 
 jobs:
   test:
-    name: Run Rspec Test Suite
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        ruby: [head, jruby-head, truffleruby-head]
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Ruby
-    # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
-    # change this to (see https://github.com/ruby/setup-ruby#versioning):
-    # uses: ruby/setup-ruby@v1
-    # https://github.com/ruby/setup-ruby Run lint explicitly on Ubuntu 20.04 to avoid warning
-      uses: ruby/setup-ruby@43bb24d212c5a32c9b2e235d20d4daa880da8ff4
+      uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7.2
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
     - name: Install dependencies
       run: bundle install
+
     - name: Run tests
       run: bundle exec rake
