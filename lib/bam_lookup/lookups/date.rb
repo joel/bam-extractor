@@ -6,6 +6,8 @@ module BamLookup
   module Lookups
     class Date
 
+      class Error < StandardError; end
+
       def initialize(row)
         @row = row
       end
@@ -32,6 +34,8 @@ module BamLookup
             when /hellobank/i
               formatted_date = DateTime.strptime(cell, '%d/%m/%Y')
             else
+              return Chronic.parse(cell) if options.date_fallback
+
               raise "Impossible to match a date format for [#{row}], please enter one"
             end
           rescue Date::Error => e
@@ -50,6 +54,10 @@ module BamLookup
 
       def log(msg)
         BamLookup.configuration.logger.info(msg)
+      end
+
+      def options
+        BamLookup.configuration.options
       end
     end
   end

@@ -5,7 +5,7 @@ require 'optparse'
 module BamLookup
   class OptparseExample
     class ScriptOptions
-      attr_accessor :expression, :verbose, :write, :min, :max, :label, :trunk, :source_file, :source_directory
+      attr_accessor :expression, :verbose, :write, :min, :max, :label, :trunk, :source_file, :source_directory, :date_fallback
 
       def initialize
         self.verbose = false
@@ -15,6 +15,7 @@ module BamLookup
         self.trunk = 100
         self.source_file = false
         self.source_directory = nil
+        self.date_fallback = false
       end
 
       def define_options(parser)
@@ -33,6 +34,7 @@ module BamLookup
         boolean_verbose_option(parser)
         boolean_write_option(parser)
         boolean_source_file_option(parser)
+        boolean_date_fallback(parser)
 
         parser.separator ''
         parser.separator 'Common options:'
@@ -102,6 +104,12 @@ module BamLookup
       def boolean_source_file_option(parser)
         parser.on('-d', '--[no-]source_file', 'Add Source file') do |source_file|
           self.source_file = source_file
+        end
+      end
+
+      def boolean_date_fallback(parser)
+        parser.on('-b', '--[no-]date_fallback', 'Guess is format unknown') do |date_fallback|
+          self.date_fallback = date_fallback
         end
       end
     end

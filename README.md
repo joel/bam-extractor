@@ -79,7 +79,11 @@ or pass the path with `--source_directory`
 
 ## Usage
 
-TODO: Write usage instructions here
+Test
+
+```
+ruby bin/lookup.rb --expression etoro,degiro --min -5000 --max 0 --no-verbose --source_file --source_directory=(pwd)/fixtures --date_fallback --label="Stock Market"
+```
 
 ## Development
 
