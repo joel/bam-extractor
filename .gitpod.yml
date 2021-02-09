@@ -2,3 +2,7 @@ image:
   file: .gitpod.Dockerfile
 tasks:
   - init: bundle install && gem uninstall minitest
+
+vscode:
+  extensions:
+    - grapecity.gc-excelviewer@3.0.41:GzAGW4r0SiwED/jK3g1Jlw==
