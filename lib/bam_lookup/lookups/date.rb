@@ -25,6 +25,10 @@ module BamLookup
               formatted_date = DateTime.strptime(cell, '%Y-%m-%d')
             when /.*(ing).*(direct).*/i
               formatted_date = DateTime.strptime(cell, '%m/%d/%Y')
+            when /joint\sbank\saccount/i
+              formatted_date = DateTime.strptime(cell, '%m/%d/%Y')
+            when /personal\sbank\saccount/i
+              formatted_date = DateTime.strptime(cell, '%m/%d/%Y')
             when /hellobank/i
               formatted_date = DateTime.strptime(cell, '%d/%m/%Y')
             else
